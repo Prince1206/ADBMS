@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management System | ADMS Mini Project</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">📦</div>
+      <div>
+        <div class="brand-title">StockFlow</div>
+        <div class="brand-subtitle">ADMS Inventory System</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="index.html" class="nav-link active">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="products.html" class="nav-link">
+          <span>📦</span>
+          <span>Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="suppliers.html" class="nav-link">
+          <span>🏭</span>
+          <span>Suppliers</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Project: ADMS Mini Project</div>
+      <div class="db-status-pill" id="db-status">
+        <span class="pulse-dot"></span>
+        <span>MongoDB Connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="page-header">
+        <h1>Dashboard Overview</h1>
+        <p>Real-time statistics of your warehouse products and inventory alerts</p>
+      </div>
+      <div class="top-actions">
+        <a href="products.html" class="btn btn-primary">+ Manage Products</a>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="content-body">
+      <!-- 4 Stat Cards -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <h3>Total Products</h3>
+            <div class="stat-number" id="stat-products">0</div>
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-icon success">📊</div>
+          <div class="stat-info">
+            <h3>Total Stock Units</h3>
+            <div class="stat-number" id="stat-stock">0</div>
+          </div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-icon info">🏭</div>
+          <div class="stat-info">
+            <h3>Total Suppliers</h3>
+            <div class="stat-number" id="stat-suppliers">0</div>
+          </div>
+        </div>
+
+        <div class="stat-card alert">
+          <div class="stat-icon alert">⚠️</div>
+          <div class="stat-info">
+            <h3>Low Stock Products</h3>
+            <div class="stat-number" id="stat-low-stock">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Low Stock Alert Section -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🚨 Low Stock Critical Alerts</h2>
+            <div class="card-subtitle">Items whose available quantity has fallen below or reached reorder level</div>
+          </div>
+          <a href="products.html?filter=lowStock" class="btn btn-secondary btn-sm">View in Products</a>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product Code</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Supplier</th>
+                  <th>Current Stock</th>
+                  <th>Reorder Level</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="low-stock-table-body">
+                <tr>
+                  <td colspan="7" class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <h3>Loading alerts...</h3>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Summary Section -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">ℹ️ System Architecture & Workflow</h2>
+            <div class="card-subtitle">College ADMS Project Implementation Overview</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+            This application uses a 3-tier architecture:
+            <strong>Vanilla Frontend (HTML/CSS/JS)</strong> communicates with an
+            <strong>Express.js REST API</strong> via native <code>fetch()</code>, which performs CRUD operations directly on
+            <strong>MongoDB</strong> using <strong>Mongoose</strong> schemas and validations.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    async function loadDashboard() {
+      try {
+        // Fetch stats
+        const statsRes = await apiRequest('/products/stats');
+        const supplierRes = await apiRequest('/suppliers');
+        const lowStockRes = await apiRequest('/products/low-stock');
+
+        if (statsRes.success) {
+          document.getElementById('stat-products').textContent = statsRes.data.totalProducts;
+          document.getElementById('stat-stock').textContent = statsRes.data.totalStock;
+          document.getElementById('stat-low-stock').textContent = statsRes.data.lowStockCount;
+        }
+
+        if (supplierRes.success) {
+          document.getElementById('stat-suppliers').textContent = supplierRes.count;
+        }
+
+        // Render low stock table
+        const tbody = document.getElementById('low-stock-table-body');
+        if (lowStockRes.data && lowStockRes.data.length > 0) {
+          tbody.innerHTML = lowStockRes.data.map(p => `
+            <tr>
+              <td><span class="badge badge-code">${p.productCode}</span></td>
+              <td><strong>${p.productName}</strong></td>
+              <td><span class="badge badge-category">${p.category}</span></td>
+              <td>${p.supplier}</td>
+              <td style="color: var(--danger); font-weight: 700;">${p.quantity} units</td>
+              <td>${p.reorderLevel} units</td>
+              <td><span class="badge badge-low-stock">⚠️ LOW STOCK</span></td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="empty-state">
+                <div class="empty-state-icon">✅</div>
+                <h3>All Stocks Healthy</h3>
+                <p>No products are currently at or below their reorder levels.</p>
+              </td>
+            </tr>
+          `;
+        }
+      } catch (err) {
+        showToast('Unable to connect to backend server. Make sure node server.js is running.', 'error');
+        document.getElementById('db-status').innerHTML = '<span style="color:#ef4444;">● Offline / Disconnected</span>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

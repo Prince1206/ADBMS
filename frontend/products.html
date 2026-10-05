@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Products | Inventory Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">📦</div>
+      <div>
+        <div class="brand-title">StockFlow</div>
+        <div class="brand-subtitle">ADMS Inventory System</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="products.html" class="nav-link active">
+          <span>📦</span>
+          <span>Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="suppliers.html" class="nav-link">
+          <span>🏭</span>
+          <span>Suppliers</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Project: ADMS Mini Project</div>
+      <div class="db-status-pill">
+        <span class="pulse-dot"></span>
+        <span>MongoDB Connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="page-header">
+        <h1>Product Management</h1>
+        <p>Add, edit, view, search, and manage products and inventory stock levels</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-primary" id="open-add-product-btn">+ Add New Product</button>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="content-body">
+      <!-- Search & Filters Card -->
+      <section class="card">
+        <div class="card-body">
+          <div class="controls-bar">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input" placeholder="Search by name, code, category, supplier...">
+            </div>
+
+            <select id="category-filter" class="filter-select">
+              <option value="">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Cables">Cables</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Office Supplies">Office Supplies</option>
+            </select>
+
+            <select id="stock-filter" class="filter-select">
+              <option value="all">All Stock Status</option>
+              <option value="low">Low Stock Only (<= Reorder Level)</option>
+              <option value="normal">Normal Stock Only</option>
+            </select>
+
+            <button class="btn btn-secondary" id="reset-filter-btn">Reset Filters</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Products Table Card -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Product Inventory List</h2>
+            <div class="card-subtitle" id="product-count-subtitle">Showing all registered products</div>
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product Code</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Supplier</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Reorder Level</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body">
+                <tr>
+                  <td colspan="9" class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <h3>Loading products...</h3>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add / Edit Product Modal -->
+  <div class="modal-backdrop" id="product-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Add New Product</h3>
+        <button class="btn-close" id="close-modal-btn">&times;</button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="product-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="prod-name">Product Name <span class="req">*</span></label>
+              <input type="text" id="prod-name" class="form-control" placeholder="e.g. Wireless Mouse" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-code">Product Code <span class="req">*</span></label>
+              <input type="text" id="prod-code" class="form-control" placeholder="e.g. WM001" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-category">Category <span class="req">*</span></label>
+              <select id="prod-category" class="form-control" required>
+                <option value="">Select Category</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Cables">Cables</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Office Supplies">Office Supplies</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-supplier">Supplier <span class="req">*</span></label>
+              <select id="prod-supplier" class="form-control" required>
+                <option value="">Select Supplier</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-qty">Stock Quantity <span class="req">*</span></label>
+              <input type="number" id="prod-qty" class="form-control" min="0" placeholder="e.g. 50" required>
+            </div>
+
+            <div class="form-group">
+              <label for="prod-price">Unit Price (₹) <span class="req">*</span></label>
+              <input type="number" id="prod-price" class="form-control" min="0" step="0.01" placeholder="e.g. 599" required>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label for="prod-reorder">Reorder Level Threshold <span class="req">*</span></label>
+              <input type="number" id="prod-reorder" class="form-control" min="0" placeholder="e.g. 10 (triggers low stock warning)" required value="10">
+            </div>
+
+            <div class="form-group col-span-2">
+              <label for="prod-desc">Description</label>
+              <textarea id="prod-desc" class="form-control" placeholder="Brief description of product features"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-product-btn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

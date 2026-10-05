@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Suppliers | Inventory Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">📦</div>
+      <div>
+        <div class="brand-title">StockFlow</div>
+        <div class="brand-subtitle">ADMS Inventory System</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="index.html" class="nav-link">
+          <span>📊</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="products.html" class="nav-link">
+          <span>📦</span>
+          <span>Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="suppliers.html" class="nav-link active">
+          <span>🏭</span>
+          <span>Suppliers</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Project: ADMS Mini Project</div>
+      <div class="db-status-pill">
+        <span class="pulse-dot"></span>
+        <span>MongoDB Connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="page-header">
+        <h1>Supplier Management</h1>
+        <p>Register, view, update, and manage inventory vendors and suppliers</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-primary" id="open-add-supplier-btn">+ Add New Supplier</button>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="content-body">
+      <!-- Search Card -->
+      <section class="card">
+        <div class="card-body">
+          <div class="controls-bar">
+            <div class="search-input-wrapper" style="min-width: 320px;">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="supplier-search-input" placeholder="Search suppliers by name, company, email, phone...">
+            </div>
+            <button class="btn btn-secondary" id="reset-supplier-search-btn">Clear Search</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Suppliers Table Card -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Registered Suppliers</h2>
+            <div class="card-subtitle" id="supplier-count-subtitle">Showing all suppliers</div>
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Supplier Name</th>
+                  <th>Company</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="suppliers-table-body">
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <h3>Loading suppliers...</h3>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add / Edit Supplier Modal -->
+  <div class="modal-backdrop" id="supplier-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="supplier-modal-title">Add New Supplier</h3>
+        <button class="btn-close" id="close-supplier-modal-btn">&times;</button>
+      </div>
+      <form id="supplier-form">
+        <input type="hidden" id="supplier-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="supp-name">Contact Person / Supplier Name <span class="req">*</span></label>
+              <input type="text" id="supp-name" class="form-control" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="form-group">
+              <label for="supp-company">Company Name <span class="req">*</span></label>
+              <input type="text" id="supp-company" class="form-control" placeholder="e.g. ABC Electronics Ltd" required>
+            </div>
+
+            <div class="form-group">
+              <label for="supp-email">Email Address <span class="req">*</span></label>
+              <input type="email" id="supp-email" class="form-control" placeholder="e.g. sales@abccorp.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="supp-phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="supp-phone" class="form-control" placeholder="e.g. +91 98765 43210" required>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label for="supp-address">Office / Warehouse Address</label>
+              <textarea id="supp-address" class="form-control" placeholder="Street, City, State, Pin Code"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-supplier-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-supplier-btn">Save Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/suppliers.js"></script>
+</body>
+</html>
